@@ -117,8 +117,12 @@ end
 -- ===============
 function refresh (context)
 --	init (context)
-	maincode (context)
-	draw (context)
+
+	--Only draw if there has not been any rescaling
+	if maincode (context) == 0 then
+		draw (context)
+	end
+
 end
 
 
@@ -171,6 +175,8 @@ function maincode (context)				-- this function will run until it is stopped
 			return 0
 		end	
 	nowAlt = alt_id						-- get current altitude from Altitude sensor (m)
+
+	returnVal = 0
 
 --  ----------------------------------
 --	State 0 = Init
@@ -225,6 +231,7 @@ function maincode (context)				-- this function will run until it is stopped
 --	  if the graph maximum Y is reached, re-scale in Y
 --  ----------------------------------------------------
 	if state > 1 and nowAlt > yMax then		--  if "in flight" and altitude reaches top of graph
+		returnVal = 1
 		yMax = yMax+5						-- add 5 m to top of graph
 
 -- check the scale marker count, and adjust if needed
@@ -238,6 +245,7 @@ function maincode (context)				-- this function will run until it is stopped
 --	  if the graph maximum X is reached, re-scale in X
 --  ----------------------------------------------------
 	if state > 1 and index > gWidth  then								-- if graph is full,
+		returnVal = 1
 		j = 1															-- temporary index number for compacted array
 		for i = 1, gWidth do											-- compact the array, skipping every 4th point
 			if i % 4 ~= 0 then											-- if not every 4th point
@@ -269,6 +277,8 @@ function maincode (context)				-- this function will run until it is stopped
 		alts[index] = nowAlt										-- add current altitude to array
 		index = index+1												-- increment the index
 	end
+
+	return returnVal
 end
 
 
