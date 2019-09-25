@@ -1,7 +1,7 @@
 local options = {
 	{ "Source", SOURCE, 1 },
-	{ "Background", COLOR, GREY },
-	{ "Interval", VALUE, 8, 1, 35 }, 
+	{ "LineColor", COLOR, GREY },
+	{ "Interval", VALUE, 10, 1, 100 }, 
 	{ "Min", VALUE, -100, -1024, 1024 },
 	{ "Max", VALUE, 100, -1024, 1024 }
 }
@@ -59,11 +59,11 @@ function drawGrap(context)
 	width = context.zone.w
 	height = context.zone.h
 
-	lcd.setColor(CUSTOM_COLOR, context.options.Background)
-	lcd.drawFilledRectangle(x, y, width, height, CUSTOM_COLOR)
+	lcd.setColor(CUSTOM_COLOR, lcd.RGB(248,252,248))
+	lcd.drawRectangle(x, y, width+2, height+3, CUSTOM_COLOR)
 
-	lcd.drawLine(x, y, x, y + height, SOLID, TEXT_BGCOLOR)
-	lcd.drawLine(x, y + height, x + width, y + height, SOLID, TEXT_BGCOLOR)
+	--lcd.drawLine(x, y, x, y + height, SOLID, lcd.rgb(248,252,248))
+	--lcd.drawLine(x, y + height, x + width, y + height, SOLID, lcd.rgb(248,252,248))
 
 	if context.index == 0 then
 		return
@@ -98,7 +98,9 @@ function drawGrap(context)
 	zeroPos = height - (height / (range / (range + minValue)))
 
 	if minValue < 0 and maxValue > 0 then
-		lcd.drawLine(x, y + height - zeroPos, x + width, y + height - zeroPos, DOTTED, TEXT_BGCOLOR)
+		lcd.setColor(CUSTOM_COLOR, context.options.LineColor)
+    lcd.drawLine(x, y + height - zeroPos, x + width, y + height - zeroPos, DOTTED, CUSTOM_COLOR )
+    lcd.drawLine(x, y + height - zeroPos +1, x + width, y + height - zeroPos+1, DOTTED, CUSTOM_COLOR )
 	end
 
 	if range == 0 then
@@ -118,7 +120,10 @@ function drawGrap(context)
 		xPos = x + (i * (context.zone.w / _maxPoints))
 		yPos = y + (maxValue - value) * (height / range)
 
-		lcd.drawLine(previous_xPos, previous_yPos, xPos, yPos, SOLID, TEXT_BGCOLOR)
+		lcd.setColor(CUSTOM_COLOR, context.options.LineColor)
+    lcd.drawLine(previous_xPos, previous_yPos, xPos, yPos, SOLID, CUSTOM_COLOR)
+    lcd.drawLine(previous_xPos-1, previous_yPos-1, xPos-1, yPos-1, SOLID, CUSTOM_COLOR)
+    lcd.drawLine(previous_xPos+1, previous_yPos+1, xPos+1, yPos+1, SOLID, CUSTOM_COLOR)
 		
 		previous_xPos = xPos
 		previous_yPos = yPos
